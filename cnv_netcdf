@@ -19,7 +19,9 @@ prof = fCNV(filename)
 # lets create cf compliant netcdf file
 
 # open a new netCDF file for writing.
-ncfile = Dataset('output.nc','w')
+# new filename with *.nc
+f_name = filename.split('.') 
+ncfile = Dataset(f_name[0]+'.nc','w')
 
 #################### Global attributes
 #Discovery and identification
