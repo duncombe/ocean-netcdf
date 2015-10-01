@@ -9,6 +9,7 @@ import time
 from numpy import dtype
 from datetime import datetime, timedelta
 import csv
+import yaml
 
 
 script, filename = argv
@@ -106,18 +107,21 @@ with open('/home/rroman/Desktop/python/imosParameters.txt','rb') as f:
 	        pass
 	    result[key] = row
 
+#print float(result['TEMP']['validMin'])
 #remove duplicate variable names
 variables = list(set(variables))
 
 for item in variables:
 	if item in result:
 		var = ncfile.createVariable(item,dtype('float64').char,('profile','z',))
-		var.longname = result[item]['standard/long name']
-		var.standard_name = result[item]['standard/long name']
-		var.units = result[item]['units of measurement']
-		var._Fillvalue = result[item]['fillValue']
-		var.valid_min = result[item]['validMin']
-		var.valid_max = result[item]['validMax']
+		var.longname = result[item]['standard/long name'].strip()
+		var.standard_name = result[item]['standard/long name'].strip()
+		var.units = result[item]['units of measurement'].strip()
+		var._Fillvalue = float(result[item]['fillValue'].strip())
+		v = result[item]['validMin'].strip()
+		if v:
+			var.valid_min = float(v)
+			var.valid_max = float(result[item]['validMax'])
 		var.platform = 'Seabird911 CTD'
 		var.source = 'Sea-Bird SBE 9 Data File'
 		var.coordinates ='time lat lon z'
@@ -206,5 +210,3 @@ setattr(ncfile, 'date_modified', time.strftime("%c"))
 
 # close the file and end the program.
 ncfile.close()
-
-#print profile.keys()
